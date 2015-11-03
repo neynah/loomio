@@ -70,7 +70,7 @@ class Ability
       (user_is_admin_of?(group.id) && group.enabled_beta_features.include?('export'))
     end
 
-    can [:members_autocomplete, :set_volume, :see_members, :move_discussions_to, :view_previous_proposals], Group do |group|
+    can [:members_autocomplete, :set_volume, :add_discussion, :see_members, :move_discussions_to, :view_previous_proposals], Group do |group|
       user_is_member_of?(group.id)
     end
 
@@ -275,6 +275,10 @@ class Ability
 
     can [:show], Vote do |vote|
       can?(:show, vote.motion)
+    end
+
+    can [:update, :destroy], Draft do |draft|
+      draft.user_id == @user.id
     end
 
   end

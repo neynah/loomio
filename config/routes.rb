@@ -80,6 +80,9 @@ Loomio::Application.routes.draw do
     end
 
     resources :events, only: :index
+    resources :drafts, only: :create do
+      delete :destroy, on: :collection
+    end
 
     resources :discussions, only: [:show, :index, :create, :update, :destroy] do
       patch :mark_as_read, on: :member

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151028230049) do
+ActiveRecord::Schema.define(version: 20151103094050) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -264,6 +264,13 @@ ActiveRecord::Schema.define(version: 20151028230049) do
   add_index "discussions", ["key"], name: "index_discussions_on_key", unique: true, using: :btree
   add_index "discussions", ["last_activity_at"], name: "index_discussions_on_last_activity_at", order: {"last_activity_at"=>:desc}, using: :btree
   add_index "discussions", ["private"], name: "index_discussions_on_private", using: :btree
+
+  create_table "drafts", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "draftable_id"
+    t.string  "draftable_type"
+    t.json    "payload"
+  end
 
   create_table "events", force: :cascade do |t|
     t.string   "kind",           limit: 255
