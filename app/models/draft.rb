@@ -4,4 +4,17 @@ class Draft < ActiveRecord::Base
 
   validates :user, presence: true
   validates :draftable, presence: true
+
+  class << self
+    def purge(user:, draftable:, field:)
+      find_or_initialize_by(user: user, draftable: draftable).purge(field)
+    end
+    handle_asynchronously :purge
+  end
+
+  def purge(field)
+    self.payload ||= {}
+    self.payload[field] = {}
+    self.save
+  end
 end

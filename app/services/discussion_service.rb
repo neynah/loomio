@@ -30,6 +30,7 @@ class DiscussionService
 
     actor.ability.authorize! :create, discussion
     discussion.save!
+    Draft.purge(user: actor, draftable: discussion.group, field: :discussion)
     ThreadSearchService.index! discussion.id
     Events::NewDiscussion.publish!(discussion)
   end
