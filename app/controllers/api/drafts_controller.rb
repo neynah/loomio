@@ -1,5 +1,10 @@
 class API::DraftsController < API::RestfulController
 
+  def show
+    load_resource
+    respond_with_resource
+  end
+
   alias :create :update
 
   private
@@ -9,9 +14,8 @@ class API::DraftsController < API::RestfulController
   end
 
   def draftable
-    (params[:group_id]      && load_and_authorize(:group, :add_discussion)) ||
-    (params[:discussion_id] && load_and_authorize(:discussion, :add_comment)) ||
-    (params[:motion_id]     && load_and_authorize(:motion, :vote))
+    return unless ['group', 'discussion', 'motion'].include? resource_params[:draftable_type]
+    @draftable ||= resource_params[:draftable_type].classify.constantize.find(params[:draftable_id])
   end
 
   def resource_params

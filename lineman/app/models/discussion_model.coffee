@@ -126,3 +126,19 @@ angular.module('loomioApp').factory 'DiscussionModel', (BaseModel, AppConfig) ->
 
     move: =>
       @remote.patchMember @keyOrId(), 'move', { group_id: @groupId }
+
+    draft: ->
+      @recordStore.drafts.findOrBuildFor(@group())
+
+    updateDraft: ->
+      draft = @draft()
+      draft.update(payload: _.merge({discussionDraft: @serialize().discussion}, @draft().payload))
+      draft.save()
+
+    draftTitle: ->
+      return unless @draft() and @draft().discussionDraft
+      @draft().discussionDraft.title
+
+    draftDescription: ->
+      return unless @draft() and @draft().discussionDraft
+      @draft().discussionDraft.title

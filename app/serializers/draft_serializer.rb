@@ -1,6 +1,6 @@
 class DraftSerializer < ActiveModel::Serializer
   embed :ids, include: true
-  attributes :id, :user_id, :draftable_type, :draftable_id, :discussion_draft, :proposal_draft, :comment_draft, :vote_draft
+  attributes :id, :draftable_type, :draftable_id, :discussion_draft, :proposal_draft, :comment_draft, :vote_draft
 
   def discussion_draft
     object.payload['discussion'] || {}

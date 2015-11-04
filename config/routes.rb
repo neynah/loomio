@@ -80,7 +80,8 @@ Loomio::Application.routes.draw do
     end
 
     resources :events, only: :index
-    resources :drafts, only: :create do
+    resources :drafts, only: [:show, :create] do
+      get    :show, on: :collection
       delete :destroy, on: :collection
     end
 

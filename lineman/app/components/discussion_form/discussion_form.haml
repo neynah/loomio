@@ -13,18 +13,18 @@
 
     .form-group{ng-show: 'showGroupSelect'}
       %label{for: 'discussion-group-field', translate: 'discussion_form.group_label'}
-      %select.form-control#discussion-group-field{ng-model: 'discussion.groupId', ng-required: 'true' ng-options: 'group.id as group.fullName for group in availableGroups() | orderBy: "fullName"', ng-change: 'setCurrentPrivacy()'}
+      %select.form-control#discussion-group-field{ng-model: 'discussion.groupId', ng-required: 'true' ng-options: 'group.id as group.fullName for group in availableGroups() | orderBy: "fullName"', ng-change: 'fetchDraft()'}
         %option{value: '', translate: 'discussion_form.group_placeholder' }
 
     .discussion-group-selected{ng_show: 'discussion.groupId'}
       .form-group
         %label{for: 'discussion-title-field', translate: 'discussion_form.title_label'}
-        %input.discussion-form__title-input.form-control.lmo-primary-form-input#discussion-title-field{placeholder: "{{ 'discussion_form.title_placeholder' | translate }}", ng-model: 'discussion.title', ng-required: 'true', maxlength: '255'}
+        %input.discussion-form__title-input.form-control.lmo-primary-form-input#discussion-title-field{placeholder: "{{ 'discussion_form.title_placeholder' | translate }}", ng-model: 'discussion.title', ng-model-options: '{debounce: 600}' ng-change: 'storeDraft()', ng-required: 'true', maxlength: '255'}
         %validation_errors{subject: 'discussion', field: 'title'}
 
       .form-group
         %label{for: 'discussion-context-field', translate: 'discussion_form.context_label'}
-        %textarea.discussion-form__description-input.form-control.lmo-primary-form-input#discussion-context-field{msd-elastic: 'true', ng-model: 'discussion.description', placeholder: "{{ 'discussion_form.context_placeholder' | translate }}"}
+        %textarea.discussion-form__description-input.form-control.lmo-primary-form-input#discussion-context-field{msd-elastic: 'true', ng-model: 'discussion.description', , ng-model-options: '{debounce: 600}' ng-change: 'storeDraft()',placeholder: "{{ 'discussion_form.context_placeholder' | translate }}"}
 
       .form-group{ng-show: 'showPrivacyForm()'}
         .privacy-form-option

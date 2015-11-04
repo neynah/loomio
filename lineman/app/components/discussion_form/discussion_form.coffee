@@ -16,6 +16,14 @@ angular.module('loomioApp').factory 'DiscussionForm', ->
       successCallback: (response) =>
         $location.path "/d/#{response.discussions[0].key}" if actionName == 'created'
 
+    $scope.fetchDraft = ->
+      return unless $scope.discussion.group()
+      Records.drafts.fetchFor($scope.discussion.group())
+
+    $scope.storeDraft = ->
+      return unless $scope.discussion.isNew()
+      $scope.discussion.updateDraft()
+
     $scope.availableGroups = ->
       _.filter CurrentUser.groups(), (group) ->
         AbilityService.canStartThread(group)
