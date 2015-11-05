@@ -6,9 +6,6 @@ angular.module('loomioApp').factory 'DiscussionForm', ->
     if $scope.discussion.isNew()
       $scope.showGroupSelect = true
 
-    $scope.$on 'modal.closing', (event) ->
-      FormService.confirmDiscardChanges(event, $scope.discussion)
-
     actionName = if $scope.discussion.isNew() then 'created' else 'updated'
 
     $scope.submit = FormService.submit $scope, $scope.discussion,
@@ -16,13 +13,15 @@ angular.module('loomioApp').factory 'DiscussionForm', ->
       successCallback: (response) =>
         $location.path "/d/#{response.discussions[0].key}" if actionName == 'created'
 
-    $scope.fetchDraft = ->
-      return unless $scope.discussion.group()
-      Records.drafts.fetchFor($scope.discussion.group())
+    $scope.draftMode = ->
+      $scope.discussion.group() && $scope.discussion.isNew()
+
+    $scope.restoreDraft = ->
+      $scope.discussion.restoreDraft() if $scope.draftMode()
+    $scope.restoreDraft()
 
     $scope.storeDraft = ->
-      return unless $scope.discussion.isNew()
-      $scope.discussion.updateDraft()
+      $scope.discussion.updateDraft() if $scope.draftMode()
 
     $scope.availableGroups = ->
       _.filter CurrentUser.groups(), (group) ->

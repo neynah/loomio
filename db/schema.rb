@@ -269,7 +269,7 @@ ActiveRecord::Schema.define(version: 20151103094050) do
     t.integer "user_id"
     t.integer "draftable_id"
     t.string  "draftable_type"
-    t.json    "payload"
+    t.json    "payload",        default: {}, null: false
   end
 
   create_table "events", force: :cascade do |t|

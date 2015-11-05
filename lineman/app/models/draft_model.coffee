@@ -5,5 +5,6 @@ angular.module('loomioApp').factory 'DraftModel', (BaseModel, AppConfig) ->
     @uniqueIndices: ['id']
     @serializableAttributes: AppConfig.permittedParams.draft
 
-    defaultValues: =>
-      payload: {}
+    afterConstruction: ->
+      draftPath = => "#{@remote.apiPrefix}/#{@constructor.plural}/#{@draftableType.toLowerCase()}/#{@draftableId}"
+      @remote.collectionPath = @remote.memberPath = draftPath

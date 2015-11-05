@@ -3,7 +3,7 @@ class AddSoftDrafts < ActiveRecord::Migration
     create_table :drafts do |t|
       t.belongs_to :user
       t.belongs_to :draftable, polymorphic: true
-      t.json :payload
+      t.json :payload, default: {}, null: false
     end
   end
 end

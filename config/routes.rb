@@ -80,9 +80,13 @@ Loomio::Application.routes.draw do
     end
 
     resources :events, only: :index
-    resources :drafts, only: [:show, :create] do
-      get    :show, on: :collection
-      delete :destroy, on: :collection
+    resources :drafts do
+      collection do
+        get    '/:draftable_type/:draftable_id', action: :show
+        post   '/:draftable_type/:draftable_id', action: :update
+        patch  '/:draftable_type/:draftable_id', action: :update
+        delete '/:draftable_type/:draftable_id', action: :destroy
+      end
     end
 
     resources :discussions, only: [:show, :index, :create, :update, :destroy] do
