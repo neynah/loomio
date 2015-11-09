@@ -8,9 +8,19 @@ describe API::DraftsController do
   let(:discussion) { create :discussion, group: group }
   let(:motion) { create :motion, discussion: discussion }
 
+  let(:user_draft) { create :draft, user: user, draftable: user }
   let(:group_draft) { create :draft, user: user, draftable: group }
   let(:discussion_draft) { create :draft, user: user, draftable: discussion }
   let(:motion_draft) { create :draft, user: user, draftable: motion }
+
+  let(:user_draft_params) {{
+    payload: {
+      group: {
+        name: 'Draft group name',
+        description: 'Draft group description'
+      }
+    }
+  }}
 
   let(:group_draft_params) {{
     payload: {
@@ -45,6 +55,21 @@ describe API::DraftsController do
   end
 
   describe 'create' do
+    it 'creates a new user draft' do
+      post :update, draft: user_draft_params, draftable_type: 'user', draftable_id: user.id
+      expect(response.status).to eq 200
+
+      draft = Draft.last
+      expect(draft.draftable).to eq user
+      expect(draft.user).to eq user
+      expect(draft.payload['group']['name']).to eq user_draft_params[:payload][:group][:name]
+      expect(draft.payload['group']['description']).to eq user_draft_params[:payload][:group][:description]
+
+      json = JSON.parse(response.body)
+      expect(json['drafts'][0]['payload']['group']['name']).to eq user_draft_params[:payload][:group][:name]
+      expect(json['drafts'][0]['payload']['group']['description']).to eq user_draft_params[:payload][:group][:description]
+    end
+
     it 'creates a new group draft' do
       post :update, draft: group_draft_params, draftable_type: 'group', draftable_id: group.id
       expect(response.status).to eq 200
@@ -88,6 +113,22 @@ describe API::DraftsController do
 
       json = JSON.parse(response.body)
       expect(json['drafts'][0]['payload']['vote']['statement']).to eq motion_draft_params[:payload][:vote][:statement]
+    end
+
+    it 'overwrites a user draft' do
+      user_draft
+      post :update, draft: user_draft_params, draftable_type: 'user', draftable_id: user.id
+      expect(response.status).to eq 200
+
+      user_draft.reload
+      expect(user_draft.draftable).to eq user
+      expect(user_draft.user).to eq user
+      expect(user_draft.payload['group']['name']).to eq user_draft_params[:payload][:group][:name]
+      expect(user_draft.payload['group']['description']).to eq user_draft_params[:payload][:group][:description]
+
+      json = JSON.parse(response.body)
+      expect(json['drafts'][0]['payload']['group']['name']).to eq user_draft_params[:payload][:group][:name]
+      expect(json['drafts'][0]['payload']['group']['description']).to eq user_draft_params[:payload][:group][:description]
     end
 
     it 'overwrites a group draft' do
