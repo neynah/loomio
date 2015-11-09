@@ -85,7 +85,6 @@ Loomio::Application.routes.draw do
         get    '/:draftable_type/:draftable_id', action: :show
         post   '/:draftable_type/:draftable_id', action: :update
         patch  '/:draftable_type/:draftable_id', action: :update
-        delete '/:draftable_type/:draftable_id', action: :destroy
       end
     end
 

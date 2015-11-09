@@ -8,3 +8,7 @@ angular.module('loomioApp').factory 'DraftModel', (BaseModel, AppConfig) ->
     afterConstruction: ->
       draftPath = => "#{@remote.apiPrefix}/#{@constructor.plural}/#{@draftableType.toLowerCase()}/#{@draftableId}"
       @remote.collectionPath = @remote.memberPath = draftPath
+
+    updateFrom: (model) ->
+      @payload[model.constructor.singular] = model.serialize()[model.constructor.singular]
+      @save()

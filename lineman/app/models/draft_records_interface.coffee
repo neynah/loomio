@@ -4,7 +4,7 @@ angular.module('loomioApp').factory 'DraftRecordsInterface', (BaseRecordsInterfa
 
     findOrBuildFor: (model) ->
       _.first(@find(draftableType: _.capitalize(model.constructor.singular), draftableId: model.id)) or
-      @build(draftableType: _.capitalize(model.constructor.singular), draftableId: model.id)
+      @build(draftableType: _.capitalize(model.constructor.singular), draftableId: model.id, payload: {})
 
     fetchFor: (model) ->
       @remote.get "#{model.constructor.singular}/#{model.id}"

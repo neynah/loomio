@@ -131,9 +131,10 @@ angular.module('loomioApp').factory 'DiscussionModel', (BaseModel, AppConfig) ->
       @recordStore.drafts.findOrBuildFor(@group())
 
     restoreDraft: ->
-      @update @draft().discussionDraft
+      @update @draft().payload.discussion
+
+    resetDraft: ->
+      @draft().updateFrom(@recordStore.discussions.build())
 
     updateDraft: ->
-      draft = @draft()
-      draft.update(payload: _.merge({discussion_draft: @serialize().discussion}, @draft().payload))
-      draft.save()
+      @draft().updateFrom(@)
