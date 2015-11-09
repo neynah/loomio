@@ -6,7 +6,7 @@ class MotionService
     motion.save!
 
     Draft.purge(user: actor, draftable: motion.discussion, field: :motion)
-    ThreadSearchService.index! motion.discussion_id
+    SearchVector.index! motion.discussion_id
 
     event = Events::NewMotion.publish!(motion)
     DiscussionReader.for(discussion: motion.discussion, user: motion.author).author_thread_item!(motion.created_at)
@@ -25,7 +25,7 @@ class MotionService
 
     motion.save!
     event = Events::MotionEdited.publish!(motion, actor)
-    ThreadSearchService.index! motion.discussion_id
+    SearchVector.index! motion.discussion_id
     event
   end
 

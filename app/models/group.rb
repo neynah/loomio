@@ -33,6 +33,7 @@ class Group < ActiveRecord::Base
   pg_search_scope :search_full_name, against: [:name, :description],
     using: {tsearch: {dictionary: "english"}}
 
+  default_scope { includes(:default_group_cover) }
 
   scope :categorised_any, -> { where('groups.category_id IS NOT NULL') }
   scope :in_category, -> (category) { where(category_id: category.id) }
@@ -203,9 +204,10 @@ class Group < ActiveRecord::Base
     content_type: { content_type: /\Aimage/ },
     file_name: { matches: [/png\Z/i, /jpe?g\Z/i, /gif\Z/i] }
 
-  define_counter_cache(:motions_count)     { |group| group.discussions.published.sum(:motions_count) }
-  define_counter_cache(:discussions_count) { |group| group.discussions.published.count }
-  define_counter_cache(:memberships_count) { |group| group.memberships.count }
+  define_counter_cache(:motions_count)           { |group| group.discussions.published.sum(:motions_count) }
+  define_counter_cache(:discussions_count)       { |group| group.discussions.published.count }
+  define_counter_cache(:memberships_count)       { |group| group.memberships.count }
+  define_counter_cache(:admin_memberships_count) { |group| group.admin_memberships.count }
   define_counter_cache(:invitations_count) { |group| group.invitations.count }
 
   # default_cover_photo is the name of the proc used to determine the url for the default cover photo
@@ -448,10 +450,6 @@ class Group < ActiveRecord::Base
     membership_requests.where(email: email).any?
   end
 
-  def members_count
-    self.memberships_count
-  end
-
   def update_full_name_if_name_changed
     if changes.include?('name')
       update_full_name
@@ -495,7 +493,7 @@ class Group < ActiveRecord::Base
   end
 
   def organisation_discussions_count
-    Group.where("parent_id = ? OR (parent_id IS NULL AND id = ?)", parent_or_self.id, parent_or_self.id).sum(:discussions_count)
+    Group.where("parent_id = ? OR (parent_id IS NULL AND groups.id = ?)", parent_or_self.id, parent_or_self.id).sum(:discussions_count)
   end
 
   def organisation_motions_count

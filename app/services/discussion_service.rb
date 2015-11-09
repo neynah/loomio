@@ -31,7 +31,7 @@ class DiscussionService
     actor.ability.authorize! :create, discussion
     discussion.save!
     Draft.purge(user: actor, draftable: discussion.group, field: :discussion)
-    ThreadSearchService.index! discussion.id
+    SearchVector.index! discussion.id
     Events::NewDiscussion.publish!(discussion)
   end
 
@@ -58,7 +58,7 @@ class DiscussionService
     discussion.save!
     event = Events::DiscussionEdited.publish!(discussion, actor)
 
-    ThreadSearchService.index! discussion.id
+    SearchVector.index! discussion.id
     DiscussionReader.for(discussion: discussion, user: actor).set_volume_as_required!
     event
   end
