@@ -212,7 +212,7 @@ class Ability
       user_is_member_of?(comment.group.id)
     end
 
-    can :add_comment, Discussion do |discussion|
+    can [:add_comment, :make_draft], Discussion do |discussion|
       user_is_member_of?(discussion.group_id)
     end
 
