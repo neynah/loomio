@@ -277,7 +277,7 @@ class Ability
       can?(:show, vote.motion)
     end
 
-    can [:update, :destroy], Draft do |draft|
+    can :update, Draft do |draft|
       draft.user_id == @user.id &&
       can?(:make_draft, draft.draftable)
     end

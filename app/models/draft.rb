@@ -13,8 +13,7 @@ class Draft < ActiveRecord::Base
   end
 
   def purge(field)
-    self.payload ||= {}
     self.payload[field] = {}
-    self.save
+    self.tap(&:save)
   end
 end
