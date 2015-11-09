@@ -22,6 +22,7 @@ angular.module('loomioApp').factory 'FormService', ($rootScope, FlashService, Dr
     success = (scope, model, options) ->
       (response) ->
         FlashService.dismiss()
+        model.resetDraft() if options.allowDrafts
         if options.flashSuccess?
           options.flashSuccess = options.flashSuccess() if typeof options.flashSuccess is 'function'
           FlashService.success options.flashSuccess, calculateFlashOptions(options.flashOptions)

@@ -12,7 +12,6 @@ angular.module('loomioApp').factory 'DiscussionForm', ->
       flashSuccess: "discussion_form.messages.#{actionName}"
       allowDrafts: true
       successCallback: (response) =>
-        $scope.discussion.resetDraft()
         $location.path "/d/#{response.discussions[0].key}" if actionName == 'created'
 
     $scope.availableGroups = ->
