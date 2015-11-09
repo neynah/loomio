@@ -1,9 +1,10 @@
-angular.module('loomioApp').factory 'DiscussionModel', (BaseModel, AppConfig) ->
-  class DiscussionModel extends BaseModel
+angular.module('loomioApp').factory 'DiscussionModel', (DraftableModel, AppConfig) ->
+  class DiscussionModel extends DraftableModel
     @singular: 'discussion'
     @plural: 'discussions'
     @uniqueIndices: ['id', 'key']
     @indices: ['groupId', 'authorId']
+    @draftParent: 'group'
     @serializableAttributes: AppConfig.permittedParams.discussion
 
     afterConstruction: ->
@@ -133,15 +134,3 @@ angular.module('loomioApp').factory 'DiscussionModel', (BaseModel, AppConfig) ->
 
     move: =>
       @remote.patchMember @keyOrId(), 'move', { group_id: @groupId }
-
-    draft: ->
-      @recordStore.drafts.findOrBuildFor(@group())
-
-    restoreDraft: ->
-      @update @draft().payload.discussion
-
-    resetDraft: ->
-      @draft().updateFrom(@recordStore.discussions.build())
-
-    updateDraft: ->
-      @draft().updateFrom(@)

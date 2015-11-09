@@ -10,19 +10,10 @@ angular.module('loomioApp').factory 'DiscussionForm', ->
 
     $scope.submit = FormService.submit $scope, $scope.discussion,
       flashSuccess: "discussion_form.messages.#{actionName}"
+      allowDrafts: true
       successCallback: (response) =>
         $scope.discussion.resetDraft()
         $location.path "/d/#{response.discussions[0].key}" if actionName == 'created'
-
-    $scope.draftMode = ->
-      $scope.discussion.group() && $scope.discussion.isNew()
-
-    $scope.restoreDraft = ->
-      $scope.discussion.restoreDraft() if $scope.draftMode()
-    $scope.restoreDraft()
-
-    $scope.storeDraft = ->
-      $scope.discussion.updateDraft() if $scope.draftMode()
 
     $scope.availableGroups = ->
       _.filter CurrentUser.groups(), (group) ->
