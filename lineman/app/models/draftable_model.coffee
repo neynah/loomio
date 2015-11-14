@@ -5,6 +5,9 @@ angular.module('loomioApp').factory 'DraftableModel', (BaseModel) ->
     draft: ->
       @recordStore.drafts.findOrBuildFor(@[@constructor.draftParent]())
 
+    fetchDraft: =>
+      @recordStore.drafts.fetchFor(@[@constructor.draftParent]())
+
     restoreDraft: ->
       @update @draft().payload[@constructor.singular]
 
