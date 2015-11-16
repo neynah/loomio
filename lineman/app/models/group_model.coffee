@@ -12,10 +12,20 @@ angular.module('loomioApp').factory 'GroupModel', (DraftableModel, AppConfig) ->
 
     defaultValues: ->
       parentId: null
+      name: ''
+      description: ''
       groupPrivacy: 'closed'
       isVisibleToPublic: true
       discussionPrivacyOptions: 'private_only'
       membershipGrantedUpon: 'approval'
+      membersCanAddMembers: false
+      membersCanEditDiscussions: true
+      membersCanEditComments: true
+      membersCanRaiseMotions: true
+      membersCanVote: true
+      membersCanStartDiscussions: true
+      membersCanCreateSubgroups: false
+      motionsCanBeEdited: false
 
     relationships: ->
       @hasMany 'discussions'
