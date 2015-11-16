@@ -1,20 +1,5 @@
 class SearchVector < ActiveRecord::Base
 
-  WEIGHT_VALUES = [
-    1.0,   # A
-    0.3,  # B
-    0.1,  # C
-    0.03 # D
-  ].reverse.freeze
-
-  DISCUSSION_FIELD_WEIGHTS = {
-    'discussions.title'        => :A,
-    'motion_names'             => :B,
-    'discussions.description'  => :C,
-    'motion_descriptions'      => :C,
-    'comment_bodies'           => :D
-  }.freeze
-
   belongs_to :discussion, dependent: :destroy
   self.table_name = 'discussion_search_vectors'
 
@@ -30,13 +15,21 @@ class SearchVector < ActiveRecord::Base
   end
 
   scope :search_without_privacy!, ->(query, user, opts = {}) do
-    query = sanitize(query)
+    query = sanitize(query.to_s)
     self.select(:discussion_id, :search_vector, 'groups.full_name as result_group_name')
-        .select("ts_rank_cd('{#{WEIGHT_VALUES.join(',')}}', search_vector, plainto_tsquery(#{query})) as rank")
-        .where("search_vector @@ plainto_tsquery(#{query})")
+        .select("ts_rank_cd('{#{search_weights}}', search_vector, #{query_for(user, query)}) as rank")
+        .where("search_vector @@ #{query_for(user, query)}")
         .order('rank DESC')
         .offset(opts.fetch(:from, 0))
         .limit(opts.fetch(:per, 10))
+  end
+
+  def self.search_weights
+    SearchConstants::WEIGHT_VALUES.join(',')
+  end
+
+  def self.query_for(user, query, opts = {})
+    "plainto_tsquery('#{SearchConstants::LOCALES.fetch(opts[:locale] || user.locale, 'english')}', #{query})"
   end
 
   class << self
@@ -84,7 +77,7 @@ class SearchVector < ActiveRecord::Base
   end
 
   def self.discussion_field_weights
-    DISCUSSION_FIELD_WEIGHTS.map { |field, weight| "setweight(to_tsvector(coalesce(#{field}, '')), '#{weight}')" }.join ' || '
+    SearchConstants::WEIGHTED_FIELDS.map { |field, weight| "setweight(to_tsvector(coalesce(#{field}, '')), '#{weight}')" }.join ' || '
   end
 
 end
