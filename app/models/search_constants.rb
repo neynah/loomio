@@ -16,10 +16,17 @@ class SearchConstants
   }.freeze
 
   LOCALES = {
+    da: 'danish',
+    de: 'german',
     en: 'english',
-    it: 'italian',
     es: 'spanish',
-    fr: 'french'
-  }.freeze
+    it: 'italian',
+    fr: 'french',
+    'pt-BR': 'portuguese',
+    pt: 'portuguese',
+    ro: 'romanian',
+    sv: 'swedish',
+    tr: 'turkish'
+  }.with_indifferent_access.freeze
 
 end
